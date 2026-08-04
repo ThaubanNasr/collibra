@@ -9,7 +9,13 @@ MARCO/review_knowledge_base.json
 
 # Generierte Ausgaben PurposeOfUseExport
 PurposeOfUseExport/PurposeOfUse_HTML/
-PurposeOfUseExport/Purpose of Use.pdf
+PurposeOfUseExport/*.pdf
+
+# Alte Root-Ausgaben (falls noch vorhanden)
+PurposeOfUse_HTML/
+*.pdf
+review_report.html
+review_knowledge_base.json
 
 # IDE
 .vscode/
