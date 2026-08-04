@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>3AM_MCC_GEM_01 - Purpose of Use #1 - 2026-03-04</title>
+<style>
+  body { font-family: Arial, sans-serif; font-size: 11pt; margin: 30px; }
+  h1   { color: #007bff; font-size: 14pt; border-bottom: 2px solid #007bff; padding-bottom: 8px; }
+  table { border-collapse: collapse; width: 100%; margin-top: 16px; }
+  th { background: #f0f4ff; text-align: left; padding: 8px 12px; width: 220px;
+        border: 1px solid #ccd; font-weight: bold; vertical-align: top; }
+  td { padding: 8px 12px; border: 1px solid #ccd; vertical-align: top; }
+</style>
+</head>
+<body>
+<h1>3AM_MCC_GEM_01 - Purpose of Use #1 - 2026-03-04</h1>
+<table>
+            <tr>
+                <th>Purpose</th>
+                <td><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">The purpose of this DP is to cover reporting and analytic needs of SAP MCC Global Escalation Management (GEM) process. It helps to track process performance and quality metrics like volume of incoming requests, volume of processed escalations, processing durations, etc. SAP MCC business can look for trends and patterns related to customers and their regions, products and their deployment types, business impact, involved BUs and many more. Primary audience of this DP are GEM global and regional process owners as well as members of SAP MCC senior leadership team.</span></p><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">This analytic model provides measures important for GEM business along with actual values of all fields (dimensions) maintained within the process flow.</span></p><ul class="editor-list-ul"><li class="editor-listitem" dir="ltr" value="1"><span style="white-space: pre-wrap;"># Global Escalations - count of GEM escalation records independently from their state (so, this measure can be used to count escalation requests and GEM cases)</span></li><li class="editor-listitem" dir="ltr" value="2"><span style="white-space: pre-wrap;"># Top Issues - count of Top Issue (TI) records (childs) associated with GEM escalation records (parents)</span></li><li class="editor-listitem" dir="ltr" value="3"><span style="white-space: pre-wrap;"># Unique Products - count of unique PPMS products associated with GEM escalation records</span></li><li class="editor-listitem" dir="ltr" value="4"><span style="white-space: pre-wrap;">Avg. # GE Initial Cases - number of customer Cases initially assigned to each Global Escalation Request; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="5"><span style="white-space: pre-wrap;">Avg. # GE Products - number of PPMS products associated with each Global Escalation; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="6"><span style="white-space: pre-wrap;">Avg. # GE Reassignments - number of Assignment Group changes related to each GEM escalation record; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="7"><span style="white-space: pre-wrap;">Avg. # GE Top Issues - number of Top Issues associated with each Global Escalation; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="8"><span style="white-space: pre-wrap;">Avg. # GE Execution Time (Days) - time between Approval Set and Closure (or current) date of a GEM escalation record, in days; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="9"><span style="white-space: pre-wrap;">Avg. # GE Request Qualification Time (Hours) - time between Creation and Approval Set (or current) date of a GEM escalation record, in hours; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="10"><span style="white-space: pre-wrap;">Avg. # GE Total Processing Time (Days) - time between Creation and Closure (or current) date of a GEM escalation record, in days; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="11"><span style="white-space: pre-wrap;">Avg. # SLA GE Execution Time (Days) - execution time for a GEM escalation record captured by ServiceNow SLA framework, in days; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="12"><span style="white-space: pre-wrap;">Avg. # SLA GE Total Processing Time (Days) - total processing time for a GEM escalation record captured by ServiceNow SLA framework, in days; AVG aggregation</span></li><li class="editor-listitem" dir="ltr" value="13"><span style="white-space: pre-wrap;">Avg. # SLA GE Request Qualification Time (Hours) - GE request qualification time captured by ServiceNow SLA framework, in hours; AVG aggregation is applied</span></li><li class="editor-listitem" dir="ltr" value="14"><span style="white-space: pre-wrap;">Avg. # SLA GE Initial Response Time (Hours) - GE initial response time captured by ServiceNow SLA framework, in hours; AVG aggregation is applied</span></li></ul></td>
+            </tr>
+            <tr>
+                <th>Beschreibung</th>
+                <td><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Dieses Datenmodell dient der Abdeckung der Berichts- und Analyseanforderungen des SAP MCC Global Escalation Management (GEM)-Prozesses. Es unterstützt die Verfolgung von Prozessleistungs- und Qualitätskennzahlen wie dem Volumen eingehender Anfragen, dem Volumen bearbeiteter Eskalationen, den Bearbeitungsdauern usw. SAP MCC Business können Trends und Muster in Bezug auf Kunden und deren Regionen, Produkte und deren Bereitstellungstypen, Geschäftsauswirkungen, beteiligte Geschäftseinheiten und vieles mehr erkennen. Die primäre Zielgruppe dieses Datenmodells sind globale und regionale GEM-Prozessverantwortliche sowie Mitglieder des SAP MCC-Führungsteams.</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Dieses Analysemodell liefert wichtige Kennzahlen für das GEM-Geschäft sowie die Istwerte aller im Prozessablauf verwalteten Felder (Dimensionen).</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;"># Globale Eskalationen – Anzahl der GEM-Eskalationsdatensätze unabhängig von ihrem Status (diese Kennzahl kann also zur Zählung von Eskalationsanfragen und GEM-Fällen verwendet werden)</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;"># Top-Probleme – Anzahl der Top-Problem-Datensätze (untergeordnete Datensätze), die mit GEM-Eskalationsdatensätzen (übergeordnete Datensätze) verknüpft sind</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;"># Eindeutige Produkte – Anzahl der eindeutigen PPMS-Produkte, die mit GEM-Eskalationsdatensätzen verknüpft sind # GE-Erstfälle – Anzahl der Kundenfälle, die ursprünglich jeder globalen Eskalationsanfrage zugewiesen wurden; Durchschnittsberechnung wird angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnitt # GE-Produkte – Anzahl der PPMS-Produkte, die jeder globalen Eskalation zugeordnet sind; Durchschnittsberechnung wird angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnitt # GE-Neuzuweisungen – Anzahl der Änderungen der Zuweisungsgruppe im Zusammenhang mit jedem GEM-Eskalationsdatensatz; Durchschnittsberechnung wird angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnitt # GE-Top-Probleme – Anzahl der Top-Probleme, die jeder globalen Eskalation zugeordnet sind; Durchschnittsberechnung wird angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnitt # GE-Ausführungszeit (Tage) – Zeit zwischen Genehmigungsdatum und Abschlussdatum (oder aktuellem Datum) eines GEM-Eskalationsdatensatzes in Tagen; Durchschnittsberechnung wird angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnitt # GE-Qualifizierungszeit (Stunden) – Zeit zwischen Erstellungsdatum und Genehmigungsdatum (oder aktuellem Datum) eines GEM-Eskalationsdatensatzes in Stunden; Durchschnittsberechnung wird angewendet # Gesamtbearbeitungszeit für GEM-Eskalationen (Tage) – Zeitspanne zwischen Erstellung und Abschlussdatum (bzw. aktuellem Datum) eines GEM-Eskalationsdatensatzes in Tagen; Durchschnittsberechnung angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnittliche Ausführungszeit für SLA-Eskalationen (Tage) – Ausführungszeit eines GEM-Eskalationsdatensatzes, erfasst durch das ServiceNow SLA-Framework, in Tagen; Durchschnittsberechnung angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnittliche Gesamtbearbeitungszeit für SLA-Eskalationen (Tage) – Gesamtbearbeitungszeit eines GEM-Eskalationsdatensatzes, erfasst durch das ServiceNow SLA-Framework, in Tagen; Durchschnittsberechnung angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnittliche Qualifizierungszeit für SLA-Eskalationen (Stunden) – Qualifizierungszeit einer GE-Anfrage, erfasst durch das ServiceNow SLA-Framework, in Stunden; Durchschnittsberechnung angewendet</span></p><p class="editor-paragraph" dir="ltr" style=""><span style="white-space: pre-wrap;">Durchschnittliche erste Antwortzeit für SLA-Eskalationen (Stunden) – erste Antwortzeit einer GE-Anfrage, erfasst durch das ServiceNow SLA-Framework, in Stunden; Durchschnittsberechnung angewendet</span></p></td>
+            </tr>
+            <tr>
+                <th>Authorization</th>
+                <td><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">Technically, the folowing roles are used for the data access control:</span></p><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">MCC_SERVICES_NOW_C authorization to access model space in the corresponding BDC tenant; and MCC_GEM_EMEA_R; MCC_GEM_MEE_R; MCC_GEM_NA_R; MCC_GEM_LAC_R; MCC_GEM_APAC_R for data access related to customer region</span></p><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">Attention: To access this analytics model via the SAC production environment, refer to instructions provided with the corresponding asset in the Analytics Store!</span></p></td>
+            </tr>
+            <tr>
+                <th>Authorization (German)</th>
+                <td><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">Technisch gesehen werden für die Datenzugriffskontrolle folgende Rollen verwendet: MCC_SERVICES_NOW_C (Berechtigung für den Zugriff auf den Modellbereich im entsprechenden BDC-Mandanten) und MCC_GEM_EMEA_R, MCC_GEM_MEE_R, MCC_GEM_NA_R, MCC_GEM_LAC_R und MCC_GEM_APAC_R (für den Datenzugriff in Bezug auf die Kundenregion).</span></p><p class="editor-paragraph" dir="ltr"><span style="white-space: pre-wrap;">Achtung: Um über die SAC-Produktionsumgebung auf dieses Analysemodell zuzugreifen, beachten Sie die Anweisungen, die dem entsprechenden Asset im Analytics Store beiliegen!</span></p></td>
+            </tr>
+            <tr>
+                <th>Domain</th>
+                <td>02 - Customer Support - Manage Customer Escalations</td>
+            </tr>
+            <tr>
+                <th>Data Downloading Allowed</th>
+                <td>Nein</td>
+            </tr>
+            <tr>
+                <th>Data Forwarding Allowed</th>
+                <td>Nein</td>
+            </tr>
+            <tr>
+                <th>Contains direct Personal Data</th>
+                <td>Nein</td>
+            </tr>
+            <tr>
+                <th>Contains indirect Personal Data</th>
+                <td>Ja</td>
+            </tr>
+            <tr>
+                <th>German Employee Data</th>
+                <td>Nein</td>
+            </tr>
+            <tr>
+                <th>Intends Performance Control</th>
+                <td>Nein</td>
+            </tr>
+            <tr>
+                <th>Approval Date</th>
+                <td>1777852800000</td>
+            </tr>
+</table>
+</body>
+</html>

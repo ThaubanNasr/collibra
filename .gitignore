@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Generierte Ausgaben MARCO
+MARCO/review_report.html
+MARCO/review_knowledge_base.json
+
+# Generierte Ausgaben PurposeOfUseExport
+PurposeOfUseExport/PurposeOfUse_HTML/
+PurposeOfUseExport/Purpose of Use.pdf
+
+# IDE
+.vscode/
+.idea/
+
+# Claude
+.claude/
