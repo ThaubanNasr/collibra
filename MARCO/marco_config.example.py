@@ -9,5 +9,5 @@ JSESSIONID = "DEINE-JSESSIONID-HIER"
 # ── SAP AI Proxy ──────────────────────────────────────────────────────────────
 # API-Key aus dem Hyperspace AI Proxy (localhost:6655)
 AI_API_KEY  = "DEIN-AI-API-KEY-HIER"
-AI_BASE_URL = "http://localhost:6655"
+AI_BASE_URL = "http://localhost:6655"  # Hai Proxy — Endpunkt: /anthropic/v1/messages
 AI_MODEL    = "claude-sonnet-4-6"

@@ -234,7 +234,7 @@ Antworte nur mit dem JSON-Objekt, ohne Markdown-Codeblöcke."""
 
     try:
         resp = requests.post(
-            f"{AI_BASE_URL}/v1/messages",
+            f"{AI_BASE_URL}/anthropic/v1/messages",
             headers={
                 "x-api-key":         AI_API_KEY,
                 "anthropic-version": "2023-06-01",
@@ -485,7 +485,7 @@ def main():
     # Cases laden
     print(f"\nLade '{STATUS_IN_REVIEW}'-Cases...")
     assets = get_assets_by_status(session, STATUS_IN_REVIEW)
-    print(f"  → {len(assets)} Cases gefunden\n")
+    print(f"  -> {len(assets)} Cases gefunden\n")
 
     if not assets:
         print("Keine Cases gefunden.")
