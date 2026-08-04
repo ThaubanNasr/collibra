@@ -1,0 +1,48 @@
+{
+  "ablehnungsgruende": [
+    "Downloadfunktionalität ohne ausreichende Begründung und Löschkonzept – Betriebsrat widerspricht Daten-Download grundsätzlich, wenn kein PET-Eintrag und kein Löschkonzept vorhanden",
+    "Datenweitergabe an potenziell nicht Zugriffsberechtigte ohne Beschreibung der Berechtigungsprüfung",
+    "Verletzung des Gebots der Datensparsamkeit bei Massendownloads mit Mitarbeiterbezug",
+    "Möglichkeit zur Leistungs- und Verhaltenskontrolle (LVK) nicht ausgeschlossen und nicht erklärt, wie diese verhindert wird",
+    "Zweckbeschreibung zu vage – 'Wir brauchen die Daten' ist kein ausreichender Verwendungszweck",
+    "DORA-Metriken nicht für Nutzung außerhalb des SCRUM-Teams mitbestimmt",
+    "Fehlende Betriebsvereinbarung für Reporting in der Entwicklung bei personalisierten Mitarbeiterdaten"
+  ],
+  "typische_maengel": [
+    "Anzahl der Felder in Collibra/PoU und der beigefügten Excel-Feldliste stimmen nicht überein",
+    "Zweck und Prozess des Datendownloads nicht im PoU beschrieben, sondern nur in Kommentaren",
+    "Fehlende oder unvollständige deutsche Übersetzung des Purpose of Use",
+    "Felder mit direktem oder indirektem Mitarbeiterbezug (z.B. Account_ID, Opportunity_ID, CRM_Account_ID, Cost Center) nicht korrekt klassifiziert",
+    "Berechtigungskonzept unzureichend beschrieben – fehlende Angabe von Berechtigungsobjekten, User Groups und Zugriffslogik",
+    "PET-Eintrag fehlt oder enthält keine konkreten Löschfristen für heruntergeladene Daten",
+    "Keine Beschreibung, welche Entscheidungen auf Basis der Daten getroffen werden",
+    "User Groups zu unspezifisch beschrieben (z.B. nur Rollennamen ohne Erklärung, welche Abteilungen/Teams gemeint sind)",
+    "Abkürzungen im PoU nicht ausgeschrieben oder erklärt",
+    "Informationen zum Download-Zweck in Kommentaren statt im offiziellen Purpose-Abschnitt eingetragen",
+    "Flag 'German Employee Data' nicht korrekt gesetzt",
+    "Berechtigungsrelevante Felder nicht korrekt als solche markiert"
+  ],
+  "beispiele_gut": [
+    "Detaillierte Beschreibung des Datendownload-Zwecks UND -Prozesses im Purpose-Abschnitt inklusive Begründung warum Dashboard-Ansicht nicht ausreicht",
+    "Expliziter Hinweis im PoU, dass Daten NICHT für Leistungs- und Verhaltenskontrolle verwendet werden dürfen",
+    "Verweis auf bestehende Betriebsrats-Genehmigung (EAWOCO-Jira-Ticket) wenn Download bereits genehmigt wurde",
+    "Klare Beschreibung der User Groups mit Abteilung, Team und konkretem Anwendungsfall (z.B. 'AE – to monitor their pipeline on daily basis and prepare for 1:1 with their manager')",
+    "Vollständige zweisprachige Beschreibung (Deutsch und Englisch) mit übereinstimmenden Inhalten",
+    "Beschreibung des Berechtigungskonzepts mit konkretem Berechtigungsobjekt, Rollen und Zugriffslogik (inkl. ob 'All or Nothing')",
+    "PET-Eintrag mit konkreten Löschfristen vorhanden und auf Download-Szenario ausgeweitet",
+    "Feldliste in Collibra und Excel-Anhang sind vollständig deckungsgleich mit korrekter PII-Kennzeichnung",
+    "SOX-Compliance-Kontext klar begründet, warum Anonymisierung nicht möglich ist und direkte MA-Daten zwingend benötigt werden"
+  ],
+  "wichtige_hinweise": [
+    "Alle relevanten Informationen (Berechtigungskonzept, Download-Begründung etc.) müssen direkt im PoU-Dokument stehen, NICHT nur in Kommentaren",
+    "Data Download erfordert immer: (1) Begründung im PoU, (2) PET-Eintrag mit Löschfristen, (3) Beschreibung der Berechtigungsprüfung nach Download",
+    "Felder wie Account_ID, Customer_ID, Opportunity_ID, CRM_Account_ID, Sales_Org gelten als indirekter Personenbezug und müssen entsprechend gekennzeichnet werden",
+    "Bei bereits vorhandener Betriebsrats-Genehmigung (altes C4S-Verfahren oder EAWOCO-Jira) sollte der Link zur Genehmigung im PoU angegeben werden",
+    "LVK-Risiko muss aktiv adressiert werden: Entweder ausschließen und begründen wie, oder explizit im PoU verbieten",
+    "Technische Diskrepanzen zwischen Collibra-Feldliste und Excel-Export sind ein bekanntes System-Bug – muss dokumentiert und mit Stefan Treichel eskaliert werden",
+    "Befristete Zustimmung ist möglich, wenn individualisierte Daten im Output-Port nur temporär benötigt werden – Entfernung bis zu einem Stichtag vereinbaren",
+    "Wenn kein Datendownload benötigt wird, ist die Einreichung deutlich leichter genehmigungsfähig – Download-Flag deaktivieren wenn möglich",
+    "Bei Datenprodukten für Entwicklungs-Reporting (z.B. CILTS-Bereich) strebt der BR eine Regelung über Betriebsvereinbarung an",
+    "Profit Center, Org Units und Hierarchy-IDs auf höheren Ebenen (Board Area, L1 Unit) gelten nicht zwingend als indirekter Personenbezug – konkrete Hierarchieebene klären"
+  ]
+}
