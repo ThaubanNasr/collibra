@@ -371,7 +371,9 @@ def build_report(in_review_cases):
             val = e["attributes"].get(field, "")
             is_empty = field_is_empty(val)
             row_cls = ' class="attr-missing"' if (is_empty and field in REQUIRED_FIELDS) else ""
-            if val and isinstance(val, str) and val.strip().startswith("<"):
+            if isinstance(val, bool):
+                val_display = "Ja" if val else "Nein"
+            elif val and isinstance(val, str) and val.strip().startswith("<"):
                 val_display = f'<div class="attr-richtext">{val}</div>'
             elif val and str(val).strip():
                 val_display = str(val)
