@@ -1,5 +1,5 @@
 """
-Collibra - Purpose of Use Review Tool
+MARCO — Metadata Audit and Review for Compliance Operations
 Bewertet alle "In Review by Domain"-Cases regelbasiert anhand von
 Approved/Rejected/Information-Required-Cases als Referenz.
 Gibt einen lokalen HTML-Bericht aus.
@@ -14,7 +14,8 @@ from datetime import datetime
 
 # ── Konfiguration ─────────────────────────────────────────────────────────────
 BASE_DIR      = os.path.dirname(os.path.abspath(__file__))
-REPORT_PATH   = os.path.join(BASE_DIR, "review_report.html")
+_today        = datetime.now().strftime("%Y-%m-%d")
+REPORT_PATH   = os.path.join(BASE_DIR, f"marco_{_today}.html")
 COLLIBRA_HOST = "https://sap.collibra.com"
 
 JSESSIONID = "DEINE-JSESSIONID-HIER"  # Aus Edge: F12 → Console → document.cookie

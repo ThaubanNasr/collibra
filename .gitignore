@@ -4,7 +4,7 @@ __pycache__/
 *.pyo
 
 # Generierte Ausgaben MARCO
-MARCO/review_report.html
+MARCO/marco_*.html
 MARCO/review_knowledge_base.json
 
 # Generierte Ausgaben PurposeOfUseExport

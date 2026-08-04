@@ -1,2 +1,2 @@
 @echo off
-py "%~dp0review_tool.py"
+py "%~dp0marco.py"
