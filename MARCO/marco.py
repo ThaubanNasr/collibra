@@ -112,10 +112,14 @@ def strip_html(text):
         return str(text) if text is not None else ""
     text = re.sub(r'<br\s*/?>', '\n', text, flags=re.IGNORECASE)
     text = re.sub(r'<li[^>]*>', '• ', text, flags=re.IGNORECASE)
+    text = re.sub(r'<p[^>]*>', '', text, flags=re.IGNORECASE)
+    text = re.sub(r'</p>', ', ', text, flags=re.IGNORECASE)
     text = re.sub(r'<[^>]+>', '', text)
     text = (text.replace('&nbsp;', ' ').replace('&amp;', '&')
                 .replace('&lt;', '<').replace('&gt;', '>').replace('&quot;', '"'))
-    return text.strip()
+    text = re.sub(r',\s*,', ',', text)
+    text = re.sub(r'^,\s*', '', text)
+    return text.strip().strip(',')
 
 
 def field_is_empty(value):
@@ -228,7 +232,7 @@ def evaluate_case(asset, attributes):
     if user_group:
         ug_lower = user_group.lower().strip()
         if any(vg == ug_lower for vg in vague_terms) or len(user_group) < 10 or "," not in ug_lower:
-            warn(f'User Group zu vage ("{user_group}") — bitte konkrete Rollen angeben, z.B. "Carfleet Manager, Fleet Administrators".')
+            warn(f'User Group zu vage ("{user_group}") — bitte konkrete Rollen oder Personengruppen mit Zugriff auflisten.')
 
     # ── 9. Mindestlänge Purpose / Beschreibung ───────────────────────────────
     if purpose_text and len(purpose_text) < 50:
