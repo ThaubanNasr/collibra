@@ -20,13 +20,7 @@ COLLIBRA_HOST = "https://sap.collibra.com"
 JSESSIONID = "5ecaf59f-dc3f-456e-8006-6eb5288e3d5b"  # Aus Edge: F12 → Console → document.cookie
 
 # Status-Namen exakt wie in Collibra
-STATUS_IN_REVIEW   = "In Review By Domain"
-STATUS_APPROVED    = "Approved"
-STATUS_REJECTED    = "Rejected"
-STATUS_INFO_REQ    = "Information Required"
-STATUS_PRELIM      = "Preliminarily Approved"
-
-ALL_STATUSES = [STATUS_IN_REVIEW, STATUS_APPROVED, STATUS_REJECTED, STATUS_INFO_REQ, STATUS_PRELIM]
+STATUS_IN_REVIEW = "In Review By Domain"
 
 # Pflichtfelder — müssen ausgefüllt sein
 REQUIRED_FIELDS = [
@@ -285,16 +279,12 @@ def fmt_date(val):
 
 
 # ── HTML-Bericht im IUCR-Stil erstellen ──────────────────────────────────────
-def build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases):
+def build_report(in_review_cases):
     now = datetime.now().strftime("%d.%m.%Y %H:%M")
 
-    # Bewertungen durchführen
     evaluated = []
     for case in in_review_cases:
-        result = evaluate_case(
-            case["asset"],
-            case["attributes"],
-        )
+        result = evaluate_case(case["asset"], case["attributes"])
         evaluated.append({**case, **result})
 
     # Statistik
@@ -518,7 +508,6 @@ def build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases
       <span class="badge badge-total">{total} Cases</span>
       <span class="badge badge-m">Offen: {open_count}</span>
       <span class="badge badge-ok">OK: {ok_count}</span>
-      <span class="badge badge-total">Ref: {len(approved_cases)} Approved / {len(rejected_cases)} Rejected / {len(info_req_cases)} Info Req.</span>
     </div>
   </div>
   <div class="search-wrap">
@@ -611,12 +600,9 @@ def main():
         return cases
 
     in_review_cases = load_group(STATUS_IN_REVIEW)
-    approved_cases  = load_group(STATUS_APPROVED)
-    rejected_cases  = load_group(STATUS_REJECTED)
-    info_req_cases  = load_group(STATUS_INFO_REQ)
 
     print("\nErstelle HTML-Bericht...")
-    html = build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases)
+    html = build_report(in_review_cases)
 
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(html)
