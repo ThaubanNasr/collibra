@@ -226,11 +226,13 @@ def evaluate_case(asset, attributes):
     # ── 8. User Group nicht zu vage ──────────────────────────────────────────
     vague_terms = ["colleagues", "kollegen", "mitarbeiter", "employees", "users", "alle", "everyone"]
     if user_group:
-        ug_lower = user_group.lower()
-        if any(vg == ug_lower.strip() or f" {vg}" == ug_lower[-len(vg)-1:] for vg in vague_terms):
+        ug_lower = user_group.lower().strip()
+        if any(vg == ug_lower for vg in vague_terms):
             warn('"User Group" ist zu vage — bitte konkrete Rollen oder Gruppen benennen (z.B. "Sales Managers, CSM Leaders").')
-        if len(user_group) < 10:
+        elif len(user_group) < 10:
             warn('"User Group" ist sehr kurz — bitte konkreter beschreiben wer Zugriff hat.')
+        elif " " not in ug_lower and "," not in ug_lower:
+            warn('"User Group" scheint nur ein Team- oder Systemname zu sein — bitte konkrete Rollen oder Personengruppen benennen (z.B. "Carfleet Manager, Fleet Administrators").')
 
     # ── 9. Mindestlänge Purpose / Beschreibung ───────────────────────────────
     if purpose_text and len(purpose_text) < 50:
