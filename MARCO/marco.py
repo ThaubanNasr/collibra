@@ -231,8 +231,8 @@ def evaluate_case(asset, attributes):
             warn('"User Group" ist zu vage — bitte konkrete Rollen oder Gruppen benennen (z.B. "Sales Managers, CSM Leaders").')
         elif len(user_group) < 10:
             warn('"User Group" ist sehr kurz — bitte konkreter beschreiben wer Zugriff hat.')
-        elif " " not in ug_lower and "," not in ug_lower:
-            warn('"User Group" scheint nur ein Team- oder Systemname zu sein — bitte konkrete Rollen oder Personengruppen benennen (z.B. "Carfleet Manager, Fleet Administrators").')
+        elif "," not in ug_lower:
+            warn('"User Group" enthält nur einen einzigen Eintrag — bitte alle berechtigten Rollen oder Personengruppen auflisten (kommagetrennt, z.B. "Carfleet Manager, Fleet Administrators, Finance Controllers").')
 
     # ── 9. Mindestlänge Purpose / Beschreibung ───────────────────────────────
     if purpose_text and len(purpose_text) < 50:
