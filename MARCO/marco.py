@@ -8,7 +8,6 @@ Gibt einen lokalen HTML-Bericht aus.
 import os
 import re
 import sys
-import json
 import requests
 from datetime import datetime
 
@@ -18,7 +17,7 @@ _today        = datetime.now().strftime("%Y-%m-%d")
 REPORT_PATH   = os.path.join(BASE_DIR, f"marco_{_today}.html")
 COLLIBRA_HOST = "https://sap.collibra.com"
 
-JSESSIONID = "DEINE-JSESSIONID-HIER"  # Aus Edge: F12 → Console → document.cookie
+JSESSIONID = "5ecaf59f-dc3f-456e-8006-6eb5288e3d5b"  # Aus Edge: F12 → Console → document.cookie
 
 # Status-Namen exakt wie in Collibra
 STATUS_IN_REVIEW   = "In Review By Domain"
@@ -113,56 +112,6 @@ def get_attributes(session, asset_id):
     return result
 
 
-# ── Alle Kommentare einmalig laden (API ignoriert assetId-Filter) ────────────
-def load_all_comments(session):
-    all_comments = []
-    offset = 0
-    limit  = 500
-    print("Lade alle Kommentare (einmalig)...")
-    while True:
-        resp = session.get(
-            f"{COLLIBRA_HOST}/rest/2.0/comments",
-            params={"limit": limit, "offset": offset}
-        )
-        if resp.status_code == 404:
-            break
-        resp.raise_for_status()
-        data  = resp.json()
-        batch = data.get("results", [])
-        all_comments.extend(batch)
-        total = data.get("total", 0)
-        print(f"  {len(all_comments)}/{total} Kommentare geladen...")
-        if len(all_comments) >= total or not batch:
-            break
-        offset += limit
-    print(f"  -> {len(all_comments)} Kommentare geladen\n")
-    # Index: asset_id -> liste von Kommentaren
-    index = {}
-    for c in all_comments:
-        if c.get("system", False):
-            continue
-        base = c.get("baseResource", {})
-        if not isinstance(base, dict):
-            continue
-        aid = base.get("id")
-        if not aid:
-            continue
-        content = strip_html(c.get("content", "")).strip()
-        if not content:
-            continue
-        if aid not in index:
-            index[aid] = []
-        index[aid].append({
-            "content": content,
-            "date":    c.get("createdOn", ""),
-        })
-    return index
-
-
-def get_comments_for_asset(comment_index, asset_id):
-    return comment_index.get(asset_id, [])
-
-
 # ── HTML-Tags entfernen ───────────────────────────────────────────────────────
 def strip_html(text):
     if not isinstance(text, str):
@@ -183,7 +132,7 @@ def field_is_empty(value):
 
 
 # ── Regelbasierte Bewertung eines Cases ──────────────────────────────────────
-def evaluate_case(asset, attributes, comments, approved_patterns, rejected_patterns, info_req_issues):
+def evaluate_case(asset, attributes):
     findings = []
 
     def err(text):  findings.append({"level": "open", "text": text})
@@ -322,37 +271,7 @@ def evaluate_case(asset, attributes, comments, approved_patterns, rejected_patte
 
 
 # ── Wissensbasis aus Rejected + Info-Required Kommentaren aufbauen ────────────
-def build_knowledge_base(rejected_cases, info_req_cases, comment_index):
-    KB_PATH = os.path.join(BASE_DIR, "review_knowledge_base.json")
-
-    entries = []
-    for status_label, cases in [("Rejected", rejected_cases), ("Information Required", info_req_cases)]:
-        for case in cases:
-            aid  = case["asset"]["id"]
-            name = case["asset"].get("name", aid)
-            comments = comment_index.get(aid, [])
-            attrs = case["attributes"]
-            for c in comments:
-                text = c.get("content", "").strip()
-                if len(text) < 10:
-                    continue
-                # System-/Bestätigungs-Kommentare überspringen
-                skip_phrases = ["i hereby confirm", "looks good", "automatically generated",
-                                "good to go", "technischer check", "zugestimmt bis"]
-                if any(text.lower().startswith(p) for p in skip_phrases):
-                    continue
-                entries.append({
-                    "status":  status_label,
-                    "case":    name,
-                    "comment": text,
-                    "attrs":   {k: strip_html(str(v)) for k, v in attrs.items() if v},
-                })
-
-    with open(KB_PATH, "w", encoding="utf-8") as f:
-        json.dump(entries, f, ensure_ascii=False, indent=2)
-
-    print(f"  -> Wissensbasis gespeichert: {len(entries)} Einträge in review_knowledge_base.json")
-    return entries
+# (entfernt — Regeln sind fest in evaluate_case() kodiert)
 
 
 # ── Datum formatieren ─────────────────────────────────────────────────────────
@@ -366,7 +285,7 @@ def fmt_date(val):
 
 
 # ── HTML-Bericht im IUCR-Stil erstellen ──────────────────────────────────────
-def build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases, knowledge_base):
+def build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases):
     now = datetime.now().strftime("%d.%m.%Y %H:%M")
 
     # Bewertungen durchführen
@@ -375,10 +294,6 @@ def build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases
         result = evaluate_case(
             case["asset"],
             case["attributes"],
-            [],
-            approved_cases,
-            rejected_cases,
-            knowledge_base,
         )
         evaluated.append({**case, **result})
 
@@ -700,15 +615,8 @@ def main():
     rejected_cases  = load_group(STATUS_REJECTED)
     info_req_cases  = load_group(STATUS_INFO_REQ)
 
-    # Einmalig alle Kommentare laden
-    comment_index = load_all_comments(session)
-
-    # Wissensbasis aus Rejected + Info Required aufbauen
-    print("Baue Wissensbasis auf...")
-    knowledge_base = build_knowledge_base(rejected_cases, info_req_cases, comment_index)
-
     print("\nErstelle HTML-Bericht...")
-    html = build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases, knowledge_base)
+    html = build_report(in_review_cases, approved_cases, rejected_cases, info_req_cases)
 
     with open(REPORT_PATH, "w", encoding="utf-8") as f:
         f.write(html)
