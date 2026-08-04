@@ -314,21 +314,21 @@ def build_report(evaluated):
         perf     = strip_html(str(e["attributes"].get("Intends Performance Control",     ""))).lower()
         domain   = strip_html(str(e["attributes"].get("Domain", "")))
 
-        if direct   in ("ja", "true", "yes"): tags_html += '<span class="meta-tag tag-red">Direkter Personenbezug</span>'
-        if indirect in ("ja", "true", "yes"): tags_html += '<span class="meta-tag tag-orange">Indirekter Personenbezug</span>'
-        if german   in ("ja", "true", "yes"): tags_html += '<span class="meta-tag tag-orange">German Employee Data</span>'
-        if perf     in ("ja", "true", "yes"): tags_html += '<span class="meta-tag tag-red">Leistungskontrolle</span>'
-        if domain:                             tags_html += f'<span class="meta-tag">{domain}</span>'
+        if direct   in ("ja", "true", "yes"): tags_html += '<span class="tag tag-red">Direkter Personenbezug</span>'
+        if indirect in ("ja", "true", "yes"): tags_html += '<span class="tag tag-orange">Indirekter Personenbezug</span>'
+        if german   in ("ja", "true", "yes"): tags_html += '<span class="tag tag-orange">German Employee Data</span>'
+        if perf     in ("ja", "true", "yes"): tags_html += '<span class="tag tag-red">Leistungskontrolle</span>'
+        if domain:                             tags_html += f'<span class="tag tag-default">{domain}</span>'
 
         # Bewertungs-Block
         open_items = [f for f in findings if f["level"] == "open"]
         if open_items:
-            findings_html = '<div class="finding-group"><div class="finding-group-title open-title">Zu ergänzen / prüfen</div>'
-            for f in open_items:
-                findings_html += f'<div class="finding-item finding-open">{f["text"]}</div>'
-            findings_html += '</div>'
+            findings_html = '<ol class="findings-list">'
+            for idx, f in enumerate(open_items, 1):
+                findings_html += f'<li class="finding-item"><span class="finding-num">{idx}</span><span class="finding-text">{f["text"]}</span></li>'
+            findings_html += '</ol>'
         else:
-            findings_html = '<div class="finding-item finding-ok">Alles vollständig — keine offenen Punkte.</div>'
+            findings_html = '<div class="finding-ok"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Alles vollständig — bereit für den Betriebsrat.</div>'
 
         # Attribut-Tabelle
         attr_rows = ""
@@ -345,29 +345,30 @@ def build_report(evaluated):
             else:
                 val_display = "<span class='empty'>—</span>"
             attr_rows += f'<tr{row_cls}><td class="attr-key">{field}</td><td class="attr-val">{val_display}</td></tr>'
-
         # data-findings für Filter-Buttons
         findings_data = " | ".join(f["text"].lower() for f in findings)
 
         cards_html += f'''
 <div class="case-card" data-search="{search_text}" data-findings="{findings_data}">
   <div class="case-header" onclick="toggleCase(this)">
-    <div class="cat-badge {cat_cls}">{char}</div>
-    <div class="case-title-block">
-      <div class="case-title">{name}</div>
+    <div class="status-badge {'status-open' if e['verdict'] == 'Offen' else 'status-ok'}">{char}</div>
+    <div class="case-meta">
+      <div class="case-name">{name}</div>
       <div class="case-summary">{summary}</div>
-      <div class="meta-tags">{tags_html}</div>
+      <div class="case-tags">{tags_html}</div>
     </div>
-    <a class="collibra-link" href="{collibra_url}" target="_blank" onclick="event.stopPropagation()">Collibra &#x2197;</a>
-    <span class="chevron">&#9654;</span>
+    <div class="case-actions">
+      <a class="collibra-link" href="{collibra_url}" target="_blank" onclick="event.stopPropagation()">Collibra &nearr;</a>
+      <div class="chevron"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg></div>
+    </div>
   </div>
   <div class="case-body">
-    <div class="body-section">
-      <div class="body-section-title">Bewertung</div>
+    <div class="body-col">
+      <div class="body-col-title">Zu ergänzen / prüfen</div>
       {findings_html}
     </div>
-    <div class="body-section">
-      <div class="body-section-title">Attribute</div>
+    <div class="body-col">
+      <div class="body-col-title">Attribute</div>
       <table class="attr-table">{attr_rows}</table>
     </div>
   </div>
@@ -380,89 +381,133 @@ def build_report(evaluated):
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MARCO — Purpose of Use Review — {now}</title>
 <style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-  body {{ background: #f1f4f8; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; color: #1a1a2e; }}
-  .header {{ background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); padding: 24px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; }}
-  .header-left h1 {{ color: #fff; font-size: 20px; font-weight: 700; margin-bottom: 10px; }}
+  body {{ background: #eef1f6; font-family: "IBM Plex Sans", system-ui, sans-serif; font-size: 14px; color: #1a1a2e; }}
+
+  /* ── HEADER ── */
+  .header {{ background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%); padding: 28px 40px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; border-bottom: 1px solid rgba(255,255,255,0.08); }}
+  .header-brand {{ display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }}
+  .header-brand h1 {{ color: #fff; font-size: 22px; font-weight: 700; letter-spacing: -0.3px; }}
+  .header-brand .subtitle {{ color: rgba(255,255,255,0.4); font-size: 11px; font-family: "IBM Plex Mono", monospace; text-transform: uppercase; letter-spacing: 0.1em; }}
   .badges {{ display: flex; gap: 8px; flex-wrap: wrap; }}
-  .badge {{ padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }}
-  .badge-total {{ background: rgba(255,255,255,0.15); color: #fff; }}
-  .badge-ok  {{ background: #22c55e20; color: #4ade80; border: 1px solid #22c55e40; }}
-  .badge-m   {{ background: #f59e0b20; color: #fbbf24; border: 1px solid #f59e0b40; }}
+  .badge {{ padding: 4px 14px; border-radius: 4px; font-size: 12px; font-weight: 600; font-family: "IBM Plex Mono", monospace; }}
+  .badge-total {{ background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.8); }}
+  .badge-open  {{ background: rgba(245,158,11,0.2); color: #fbbf24; border: 1px solid rgba(245,158,11,0.3); }}
+  .badge-ok    {{ background: rgba(34,197,94,0.15); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }}
   .search-wrap {{ position: relative; }}
-  .search-wrap input {{ background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; padding: 8px 14px 8px 36px; color: #fff; font-size: 13px; width: 260px; outline: none; }}
-  .search-wrap input::placeholder {{ color: rgba(255,255,255,0.5); }}
-  .search-wrap svg {{ position: absolute; left: 10px; top: 50%; transform: translateY(-50%); opacity: 0.5; }}
-  .section-title {{ font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; padding: 24px 32px 8px; }}
-  .case-card {{ background: #fff; border-radius: 12px; margin: 0 24px 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); overflow: hidden; }}
-  .case-header {{ display: flex; align-items: center; gap: 14px; padding: 16px 20px; cursor: pointer; user-select: none; }}
-  .case-header:hover {{ background: #f8fafc; }}
-  .cat-badge {{ min-width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; }}
-  .cat-s {{ background: #dcfce7; color: #15803d; }}
-  .cat-m {{ background: #fef9c3; color: #92400e; }}
-  .case-title-block {{ flex: 1; min-width: 0; }}
-  .case-title {{ font-weight: 600; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }}
-  .meta-tags {{ display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }}
-  .meta-tag {{ font-size: 11px; color: #475569; background: #f8fafc; border: 1px solid #e2e8f0; padding: 2px 8px; border-radius: 4px; }}
-  .tag-red    {{ background: #fee2e2; border-color: #fca5a5; color: #991b1b; }}
-  .tag-orange {{ background: #fef9c3; border-color: #fde68a; color: #92400e; }}
-  .case-summary {{ font-size: 12px; color: #475569; margin-top: 3px; font-style: italic; }}
-  .collibra-link {{ font-size: 12px; color: #3b82f6; text-decoration: none; padding: 4px 8px; border-radius: 4px; white-space: nowrap; }}
-  .collibra-link:hover {{ background: #dbeafe; }}
-  .chevron {{ font-size: 12px; color: #94a3b8; transition: transform 0.2s; flex-shrink: 0; }}
-  .case-card.open .chevron {{ transform: rotate(90deg); }}
-  .case-body {{ display: none; padding: 0 20px 20px; border-top: 1px solid #f1f5f9; }}
-  .case-card.open .case-body {{ display: block; }}
-  .body-section {{ margin-top: 16px; }}
-  .body-section-title {{ font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #374151; margin-bottom: 8px; }}
-  .finding-group {{ margin-bottom: 10px; }}
-  .finding-group-title {{ font-size: 11px; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }}
-  .open-title {{ color: #92400e; }}
-  .finding-item {{ font-size: 13px; padding: 6px 12px; border-radius: 6px; margin-bottom: 4px; }}
-  .finding-open {{ background: #fef9c3; border-left: 3px solid #f59e0b; color: #92400e; }}
-  .finding-ok   {{ background: #dcfce7; border-left: 3px solid #22c55e; color: #15803d; }}
-  .attr-table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
-  .attr-table .attr-key {{ font-weight: 600; color: #374151; padding: 4px 8px 4px 0; vertical-align: top; width: 45%; }}
-  .attr-table .attr-val {{ color: #1e293b; padding: 4px 0; vertical-align: top; }}
-  .attr-table tr + tr td {{ border-top: 1px solid #e0e7ef; }}
-  .attr-table .attr-missing td {{ background: #fee2e2; }}
-  .attr-table .empty {{ color: #94a3b8; }}
-  .attr-richtext {{ font-size: 12px; color: #1e293b; line-height: 1.5; }}
-  .attr-richtext p {{ margin: 0 0 4px 0; }}
-  .filter-bar {{ padding: 12px 32px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; border-bottom: 1px solid #e2e8f0; background: #fff; }}
-  .filter-label {{ font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 4px; }}
-  .filter-btn {{ padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1.5px solid #e2e8f0; background: #fff; color: #475569; cursor: pointer; transition: all 0.15s; }}
-  .filter-btn:hover {{ border-color: #94a3b8; background: #f8fafc; }}
+  .search-wrap input {{ background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 9px 14px 9px 38px; color: #fff; font-size: 13px; width: 280px; outline: none; font-family: "IBM Plex Sans", sans-serif; transition: border-color 0.15s; }}
+  .search-wrap input:focus {{ border-color: rgba(255,255,255,0.35); background: rgba(255,255,255,0.12); }}
+  .search-wrap input::placeholder {{ color: rgba(255,255,255,0.35); }}
+  .search-wrap svg {{ position: absolute; left: 11px; top: 50%; transform: translateY(-50%); opacity: 0.4; }}
+
+  /* ── TOOLBAR ── */
+  .toolbar {{ background: #fff; border-bottom: 1px solid #e2e8f0; padding: 0 40px; display: flex; align-items: center; gap: 4px; height: 46px; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }}
+  .toolbar-label {{ font-size: 11px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.08em; margin-right: 8px; }}
+  .filter-btn {{ padding: 5px 13px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1.5px solid transparent; background: transparent; color: #64748b; cursor: pointer; transition: all 0.12s; white-space: nowrap; }}
+  .filter-btn:hover {{ background: #f1f5f9; color: #1e293b; }}
   .filter-btn.active {{ background: #1a1a2e; color: #fff; border-color: #1a1a2e; }}
+  .ts {{ margin-left: auto; font-size: 11px; color: #94a3b8; font-family: "IBM Plex Mono", monospace; }}
+
+  /* ── CARDS CONTAINER ── */
+  .cards {{ padding: 20px 40px 60px; display: flex; flex-direction: column; gap: 8px; }}
+
+  /* ── CASE CARD ── */
+  .case-card {{ background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden; transition: box-shadow 0.15s, border-color 0.15s; }}
+  .case-card:hover {{ border-color: #cbd5e1; box-shadow: 0 2px 8px rgba(0,0,0,0.07); }}
+  .case-card.open {{ border-color: #94a3b8; box-shadow: 0 4px 16px rgba(0,0,0,0.1); }}
+
+  .case-header {{ display: flex; align-items: center; gap: 14px; padding: 14px 18px; cursor: pointer; user-select: none; }}
+  .case-header:hover {{ background: #fafbfc; }}
+
+  /* Status badge */
+  .status-badge {{ min-width: 40px; height: 40px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px; flex-shrink: 0; font-family: "IBM Plex Mono", monospace; }}
+  .status-open {{ background: #fef3c7; color: #b45309; }}
+  .status-ok   {{ background: #dcfce7; color: #15803d; }}
+
+  .case-meta {{ flex: 1; min-width: 0; }}
+  .case-name {{ font-weight: 600; font-size: 13.5px; color: #0f172a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: "IBM Plex Mono", monospace; letter-spacing: -0.2px; }}
+  .case-summary {{ font-size: 12px; color: #64748b; margin-top: 3px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }}
+  .case-tags {{ display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }}
+  .tag {{ font-size: 10.5px; font-weight: 600; padding: 2px 8px; border-radius: 3px; text-transform: uppercase; letter-spacing: 0.04em; }}
+  .tag-default {{ background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }}
+  .tag-red     {{ background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }}
+  .tag-orange  {{ background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; }}
+
+  .case-actions {{ display: flex; align-items: center; gap: 10px; flex-shrink: 0; }}
+  .collibra-link {{ font-size: 11.5px; font-weight: 600; color: #3b82f6; text-decoration: none; padding: 5px 10px; border-radius: 4px; border: 1px solid #bfdbfe; background: #eff6ff; white-space: nowrap; transition: all 0.12s; }}
+  .collibra-link:hover {{ background: #dbeafe; border-color: #93c5fd; }}
+  .chevron {{ width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; color: #94a3b8; transition: transform 0.2s; flex-shrink: 0; }}
+  .case-card.open .chevron {{ transform: rotate(90deg); }}
+
+  /* ── CARD BODY ── */
+  .case-body {{ display: none; border-top: 1px solid #f1f5f9; }}
+  .case-card.open .case-body {{ display: grid; grid-template-columns: 1fr 1fr; }}
+  @media (max-width: 900px) {{ .case-card.open .case-body {{ grid-template-columns: 1fr; }} }}
+
+  .body-col {{ padding: 20px 22px; }}
+  .body-col + .body-col {{ border-left: 1px solid #f1f5f9; }}
+  .body-col-title {{ font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #94a3b8; margin-bottom: 14px; }}
+
+  /* ── FINDINGS LIST ── */
+  .findings-list {{ list-style: none; display: flex; flex-direction: column; gap: 8px; }}
+  .finding-item {{ display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 6px; border-left: 3px solid #f59e0b; }}
+  .finding-num {{ min-width: 20px; height: 20px; background: #f59e0b; color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; flex-shrink: 0; margin-top: 1px; font-family: "IBM Plex Mono", monospace; }}
+  .finding-text {{ font-size: 12.5px; color: #78350f; line-height: 1.5; }}
+  .finding-ok {{ display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; color: #15803d; font-size: 13px; font-weight: 500; }}
+  .finding-ok svg {{ color: #16a34a; flex-shrink: 0; }}
+
+  /* ── ATTRIBUTE TABLE ── */
+  .attr-table {{ width: 100%; border-collapse: collapse; font-size: 12px; }}
+  .attr-key {{ font-weight: 600; color: #475569; padding: 6px 10px 6px 0; vertical-align: top; width: 44%; white-space: nowrap; }}
+  .attr-val {{ color: #1e293b; padding: 6px 0; vertical-align: top; line-height: 1.5; }}
+  .attr-table tr + tr td {{ border-top: 1px solid #f1f5f9; }}
+  .attr-missing td {{ background: #fff1f2 !important; }}
+  .attr-missing .attr-key {{ color: #e11d48; }}
+  .empty {{ color: #cbd5e1; }}
+  .attr-richtext {{ font-size: 12px; line-height: 1.6; }}
+  .attr-richtext p {{ margin: 0 0 4px 0; }}
+
+  /* ── EMPTY STATE ── */
+  .empty-state {{ text-align: center; padding: 80px 40px; color: #94a3b8; font-size: 14px; }}
 </style>
 </head>
 <body>
+
 <div class="header">
-  <div class="header-left">
-    <h1>MARCO — Purpose of Use Review</h1>
+  <div>
+    <div class="header-brand">
+      <h1>MARCO</h1>
+      <span class="subtitle">Metadata Audit &amp; Review for Compliance Operations</span>
+    </div>
     <div class="badges">
       <span class="badge badge-total">{total} Cases</span>
-      <span class="badge badge-m">Offen: {open_count}</span>
-      <span class="badge badge-ok">OK: {ok_count}</span>
+      <span class="badge badge-open">! {open_count} offen</span>
+      <span class="badge badge-ok">&#10003; {ok_count} OK</span>
     </div>
   </div>
   <div class="search-wrap">
-    <svg width="16" height="16" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-    <input type="text" id="searchInput" placeholder="Suche nach Case-Name, Domain ..." oninput="filterCases()">
+    <svg width="15" height="15" fill="none" stroke="#fff" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" id="searchInput" placeholder="Case-Name, Domain suchen ..." oninput="filterCases()">
   </div>
 </div>
-<div class="section-title">In Review By Domain — {now}</div>
-<div class="filter-bar">
-  <span class="filter-label">Filter:</span>
+
+<div class="toolbar">
+  <span class="toolbar-label">Filter</span>
   <button class="filter-btn active" onclick="setFilter(this, '')">Alle</button>
   <button class="filter-btn" onclick="setFilter(this, 'pet')">Data Download / PET</button>
   <button class="filter-btn" onclick="setFilter(this, 'lvk')">LVK / German Employee</button>
   <button class="filter-btn" onclick="setFilter(this, 'authorization')">Authorization</button>
   <button class="filter-btn" onclick="setFilter(this, 'pflichtfeld')">Pflichtfeld leer</button>
   <button class="filter-btn" onclick="setFilter(this, 'user group')">User Group</button>
+  <span class="ts">In Review By Domain &mdash; {now}</span>
 </div>
-{cards_html if cards_html else '<p style="color:#999;padding:24px 32px;">Keine Cases mit Status &quot;In Review By Domain&quot; gefunden.</p>'}
-<div style="height:40px;"></div>
+
+<div class="cards">
+{cards_html if cards_html else '<div class="empty-state">Keine Cases mit Status &quot;In Review By Domain&quot; gefunden.</div>'}
+</div>
+
 <script>
 let activeFilter = '';
 function toggleCase(h) {{ h.parentElement.classList.toggle("open"); }}
