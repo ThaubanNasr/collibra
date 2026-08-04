@@ -20,7 +20,9 @@ JSESSIONID = "xxxx-xxxx-xxxx"   # aus Collibra (siehe unten)
 AI_API_KEY  = "xxxx-xxxx-xxxx"  # aus dem Hyperspace AI Proxy
 ```
 
-### 3. JSESSIONID holen
+### 3. JSESSIONID und AI_API_KEY holen
+
+**JSESSIONID** (aus Collibra):
 1. Edge öffnen, bei `https://sap.collibra.com` einloggen
 2. **`Strg + Shift + I`** → Tab **Console**
 3. `document.cookie` eingeben → Enter
@@ -28,11 +30,16 @@ AI_API_KEY  = "xxxx-xxxx-xxxx"  # aus dem Hyperspace AI Proxy
 
 Bei **401-Fehler** → JSESSIONID abgelaufen, einfach neu holen (Schritt 2–4 wiederholen).
 
+**AI_API_KEY** (aus dem Hyperspace Hai Proxy):
+- Das Hai Proxy Tray-Icon in der Windows-Taskleiste öffnen
+- Den API Key dort kopieren und in `marco_config.py` eintragen
+- Der Proxy muss laufen wenn MARCO gestartet wird
+
 ### 4. Starten
 ```
 MARCO\marco.bat
 ```
-Der Bericht öffnet sich als `marco_DATUM.html` im `MARCO\`-Ordner — im Browser öffnen.
+Nach dem Durchlauf liegt der Bericht als `marco_DATUM.html` im `MARCO\`-Ordner — Datei im Browser öffnen.
 
 ---
 
