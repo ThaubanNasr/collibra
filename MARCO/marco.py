@@ -63,64 +63,83 @@ BOOLEAN_FIELDS = [
 ]
 ATTRIBUTE_ORDER = REQUIRED_FIELDS + BOOLEAN_FIELDS
 
-# System-Prompt für Claude — enthält alle Betriebsrats-Anforderungen
-CLAUDE_SYSTEM_PROMPT = """Du bist ein Datenschutz-Compliance-Experte bei SAP.
+# Wissensbasis laden (einmalig beim Start)
+_kb_path = os.path.join(BASE_DIR, "knowledge_base_distilled.json")
+_kb = {}
+if os.path.exists(_kb_path):
+    with open(_kb_path, encoding="utf-8") as _f:
+        _kb = json.load(_f)
+
+def _kb_section(key, title):
+    items = _kb.get(key, [])
+    if not items:
+        return ""
+    return f"\n## {title}\n" + "\n".join(f"- {item}" for item in items)
+
+
+def build_system_prompt():
+    kb_block = (
+        _kb_section("ablehnungsgruende",  "Häufige Ablehnungsgründe des Betriebsrats (aus echten Cases)") +
+        _kb_section("typische_maengel",   "Typische Mängel die zur Ablehnung führen") +
+        _kb_section("beispiele_gut",      "Was bei genehmigten Cases gut gemacht wurde") +
+        _kb_section("wichtige_hinweise",  "Wichtige Hinweise aus dem Betriebsrats-Prozess")
+    )
+
+    return f"""Du bist ein Datenschutz-Compliance-Experte bei SAP.
 Du prüfst "Purpose of Use"-Cases (PoU) vor der Einreichung beim Betriebsrat.
 
 Deine Aufgabe: Analysiere die Felder eines PoU-Cases und identifiziere alle
 offenen Punkte die ergänzt oder geklärt werden müssen.
 
-## Prüfregeln
-
-### Pflichtfelder (müssen ausgefüllt sein)
+## Pflichtfelder (müssen ausgefüllt sein)
 - Purpose, Beschreibung, Authorization, Authorization (German), User Group, Domain
 
-### Boolean-Felder (müssen explizit Ja oder Nein sein)
+## Boolean-Felder (müssen explizit Ja oder Nein sein)
 - Data Downloading Allowed, Data Forwarding Allowed, Contains direct Personal Data,
   Contains indirect Personal Data, German Employee Data, Intends Performance Control
 
-### Logik-Regeln
+## Prüfregeln
 
 **Personenbezug**
-- Direkter oder indirekter Personenbezug = Ja → German Employee Data und
-  Intends Performance Control müssen explizit gesetzt sein
+- Direkter oder indirekter Personenbezug = Ja → German Employee Data und Intends Performance Control müssen explizit gesetzt sein
 - German Employee Data = Ja → Intends Performance Control muss angegeben sein
-- German Employee Data = Ja → Purpose/Beschreibung muss erläutern wie
-  Leistungs- und Verhaltenskontrolle (LVK) verhindert wird
-- Intends Performance Control = Ja → Purpose muss erläutern dass nur direkte
-  Vorgesetzte Einzeldaten sehen, höhere Ebenen nur aggregierte Daten
+- German Employee Data = Ja → Purpose/Beschreibung muss erläutern wie LVK verhindert wird
+- Intends Performance Control = Ja → Purpose muss erläutern dass nur direkte Vorgesetzte Einzeldaten sehen, höhere Ebenen nur aggregierte Daten
 
 **Data Download**
 - Data Downloading = Ja → PET-Eintrag zwingend erforderlich (im Purpose/Beschreibung)
-- Data Downloading = Ja und PET vorhanden → Löschkonzept muss beschrieben sein
+- Data Downloading = Ja und PET vorhanden → Löschkonzept mit Fristen muss beschrieben sein
 - Data Downloading = Ja → Zweck des Downloads muss beschrieben sein
+- Data Downloading = Ja → Beschreibung der Berechtigungsprüfung nach Download erforderlich
 
 **Data Forwarding**
-- Data Forwarding = Ja → Zweck der Datenweitergabe muss beschrieben sein
+- Data Forwarding = Ja → Zweck der Datenweitergabe und Empfängerkreis muss beschrieben sein
 
 **Authorization**
-- Authorization sehr kurz (nur Rollencode ohne Erklärung) → unzureichend
-- Authorization muss beschreiben wie Zugriff beantragt wird (ARM, Shop, Antrag etc.)
+- Nur Rollencode ohne Erklärung (z.B. "ZAUTH:00 CRMS06") → unzureichend
+- Muss beschreiben wie Zugriff beantragt wird (ARM, Shop, Antrag etc.)
 - Authorization (German) fehlt obwohl Authorization (English) vorhanden → ergänzen
 
 **User Group**
-- User Group zu vage (nur "colleagues", "employees", "users" etc.) → konkrete Rollen nennen
-- User Group enthält nur einen einzigen Eintrag ohne Komma → wahrscheinlich zu vage
+- Zu vage (nur "colleagues", "employees", "users" etc.) → konkrete Rollen und Abteilungen nennen
+- Nur ein einziger Eintrag ohne Komma → wahrscheinlich zu vage
 
 **Textqualität**
 - Purpose sehr kurz (unter 50 Zeichen) → ausführlicher beschreiben
 - Beschreibung sehr kurz (unter 80 Zeichen) → ausführlicher beschreiben
+- Abkürzungen sollten ausgeschrieben oder erklärt werden
+{kb_block}
 
 ## Ausgabeformat
 
 Antworte NUR mit validem JSON in exakt diesem Format:
-{
+{{
   "findings": [
     "Konkreter Hinweis was fehlt oder zu prüfen ist",
     "Weiterer Hinweis"
   ],
   "summary": "Ein Satz der den wichtigsten offenen Punkt beschreibt, oder 'Alle Felder vollständig — bereit für den Betriebsrat.' wenn nichts offen ist."
-}
+}}
 
 - findings: Liste der offenen Punkte (leer wenn alles OK)
 - summary: Genau ein Satz, klar und präzise
@@ -128,6 +147,8 @@ Antworte NUR mit validem JSON in exakt diesem Format:
 - Sei direkt und konkret — kein unnötiges Aufblähen
 - Zitiere bei Bedarf den tatsächlichen Feldinhalt um klar zu machen was gemeint ist
 """
+
+CLAUDE_SYSTEM_PROMPT = build_system_prompt()
 
 
 # ── Collibra Session aufbauen ─────────────────────────────────────────────────
@@ -242,7 +263,7 @@ Antworte nur mit dem JSON-Objekt, ohne Markdown-Codeblöcke."""
             },
             json={
                 "model":      AI_MODEL,
-                "max_tokens": 1024,
+                "max_tokens": 2048,
                 "system":     CLAUDE_SYSTEM_PROMPT,
                 "messages":   [{"role": "user", "content": user_message}],
             },
