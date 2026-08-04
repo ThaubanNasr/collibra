@@ -3,6 +3,10 @@ __pycache__/
 *.pyc
 *.pyo
 
+# Konfiguration mit Secrets — niemals einchecken
+MARCO/marco_config.py
+PurposeOfUseExport/export_config.py
+
 # Generierte Ausgaben MARCO
 MARCO/marco_*.html
 MARCO/review_knowledge_base.json
